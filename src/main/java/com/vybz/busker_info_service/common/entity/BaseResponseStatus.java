@@ -100,7 +100,14 @@ public enum BaseResponseStatus {
      * 팔로우 에러
      */
     ALREADY_FOLLOWED(HttpStatus.BAD_REQUEST, false, 1700, "이미 팔로우한 버스커입니다."),
-    NO_EXIST_FOLLOW(HttpStatus.BAD_REQUEST, false, 1701, "존재하지 않는 팔로우입니다.");
+    NO_EXIST_FOLLOW(HttpStatus.BAD_REQUEST, false, 1701, "존재하지 않는 팔로우입니다."),
+
+    /**
+     * 버스커 카테고리 에러
+     */
+    DUPLICATE_BUSKER_CATEGORY(HttpStatus.BAD_REQUEST, false, 1800, "이미 존재하는 버스커 카테고리입니다."),
+    NO_EXIST_BUSKER_CATEGORY(HttpStatus.BAD_REQUEST, false, 1801, "존재하지 않는 버스커 카테고리입니다."),
+    NO_EXIST_BUSKER_OR_CATEGORY(HttpStatus.BAD_REQUEST, false, 1802, "존재하지 않는 버스커 또는 카테고리입니다.");
 
     private final HttpStatusCode httpStatusCode;
     private final boolean isSuccess;
