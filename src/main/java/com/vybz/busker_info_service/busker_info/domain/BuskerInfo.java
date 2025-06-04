@@ -40,24 +40,9 @@ public class BuskerInfo extends SoftDeletableEntity {
     @Column(name = "introduction")
     private String introduction;
 
-    public void updateProfileImage(String imageUrl) {
-        this.profileImageUrl = imageUrl;
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void updateIntroduction(String introduction) {
-        this.introduction = introduction;
-    }
-
-    public void clearProfileImageUrl() {
-        this.profileImageUrl = null;
-    }
-
     @Builder
-    public BuskerInfo(String buskerUuid, String profileImageUrl, String nickname, String introduction) {
+    public BuskerInfo(Long id, String buskerUuid, String profileImageUrl, String nickname, String introduction) {
+        this.id = id;
         this.buskerUuid = buskerUuid;
         this.profileImageUrl = profileImageUrl;
         this.nickname = nickname;

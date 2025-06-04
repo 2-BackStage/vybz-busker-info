@@ -8,21 +8,17 @@ import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoD
 import com.vybz.busker_info_service.busker_info.infrastructure.BuskerInfoRepository;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
 import com.vybz.busker_info_service.common.exception.BaseException;
-import com.vybz.busker_info_service.common.util.AmazonS3UploaderUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BuskerInfoServiceImpl implements BuskerInfoService {
 
     private final BuskerInfoRepository buskerInfoRepository;
-    private final AmazonS3UploaderUtil amazonS3UploaderUtil;
 
     /**
      * 버스커 정보 추가
@@ -35,15 +31,7 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
         if (buskerInfoRepository.existsByBuskerUuid(requestAddBuskerInfoDto.getBuskerUuid())) {
             throw new BaseException(BaseResponseStatus.DUPLICATE_BUSKER);
         }
-
-        String profileImageUrl = null;
-
-        if (requestAddBuskerInfoDto.getProfileImageUrl() != null && !requestAddBuskerInfoDto.getProfileImageUrl().isEmpty()) {
-            profileImageUrl = amazonS3UploaderUtil.upload(requestAddBuskerInfoDto.getProfileImageUrl(), "busker-profile");
-        }
-
-        buskerInfoRepository.save(requestAddBuskerInfoDto.toEntity(profileImageUrl));
-
+        buskerInfoRepository.save(requestAddBuskerInfoDto.toEntity());
     }
 
     /**
@@ -79,17 +67,7 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
     public void updateBuskerInfo(RequestUpdateBuskerInfoDto requestUpdateBuskerInfoDto) {
         BuskerInfo buskerInfo = buskerInfoRepository.findByBuskerUuidAndDeletedFalse(requestUpdateBuskerInfoDto.getBuskerUuid())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_BUSKER));
-
-        String imageUrl = null;
-        MultipartFile profileImage = requestUpdateBuskerInfoDto.getProfileImageUrl();
-
-        if (profileImage != null && !profileImage.isEmpty()) {
-            Optional.ofNullable(buskerInfo.getProfileImageUrl())
-                    .ifPresent(amazonS3UploaderUtil::delete);
-            imageUrl = amazonS3UploaderUtil.upload(profileImage, "busker-profile");
-        }
-        requestUpdateBuskerInfoDto.updateEntity(buskerInfo, imageUrl);
-
+        buskerInfoRepository.save(requestUpdateBuskerInfoDto.updateEntity(buskerInfo));
     }
 
     /**
