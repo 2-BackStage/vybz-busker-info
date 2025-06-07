@@ -36,6 +36,7 @@ public class BuskerInfoEventConsumer {
                         .buskerUuid(buskerInfoEvent.getBuskerUuid())
                         .nickname(buskerInfoEvent.getNickname())
                         .profileImageUrl(buskerInfoEvent.getProfileImageUrl())
+                        .introduction(buskerInfoEvent.getIntroduction())
                         .build());
         buskerInfoRepository.save(buskerInfo);
         log.info("🔥 버스커 정보 저장 완료: {}", buskerInfo);
