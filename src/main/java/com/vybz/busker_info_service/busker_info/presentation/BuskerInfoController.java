@@ -30,8 +30,8 @@ public class BuskerInfoController {
      * @param requestAddBuskerInfoVo
      */
     @Operation(summary = "버스커 정보 추가 API", description = "버스커 정보 추가 API 입니다.", tags = {"Busker-Service"})
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BaseResponseEntity<Void> createBuskerInfo(@ModelAttribute RequestAddBuskerInfoVo requestAddBuskerInfoVo) {
+    @PostMapping
+    public BaseResponseEntity<Void> createBuskerInfo(@RequestBody RequestAddBuskerInfoVo requestAddBuskerInfoVo) {
         buskerInfoService.createBuskerInfo(RequestAddBuskerInfoDto.from(requestAddBuskerInfoVo));
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
@@ -65,8 +65,8 @@ public class BuskerInfoController {
      * @param requestUpdateBuskerInfoVo
      */
     @Operation(summary = "버스커 정보 수정 API", description = "버스커 정보 수정 API 입니다.", tags = {"Busker-Service"})
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BaseResponseEntity<Void> updateBuskerInfo(@ModelAttribute RequestUpdateBuskerInfoVo requestUpdateBuskerInfoVo) {
+    @PutMapping
+    public BaseResponseEntity<Void> updateBuskerInfo(@RequestBody RequestUpdateBuskerInfoVo requestUpdateBuskerInfoVo) {
         buskerInfoService.updateBuskerInfo(RequestUpdateBuskerInfoDto.from(requestUpdateBuskerInfoVo));
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }

@@ -41,11 +41,11 @@ public class BuskerInfo extends SoftDeletableEntity {
     private String introduction;
 
     @Builder
-    public BuskerInfo(Long id, String buskerUuid, String profileImageUrl, String nickname, String introduction) {
+    public BuskerInfo(Long id, String buskerUuid, String nickname, String profileImageUrl, String introduction) {
         this.id = id;
         this.buskerUuid = buskerUuid;
-        this.profileImageUrl = profileImageUrl;
         this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
         this.introduction = introduction;
     }
 
