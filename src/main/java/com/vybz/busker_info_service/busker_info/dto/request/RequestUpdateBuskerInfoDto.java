@@ -2,6 +2,7 @@ package com.vybz.busker_info_service.busker_info.dto.request;
 
 import com.vybz.busker_info_service.busker_info.domain.BuskerInfo;
 import com.vybz.busker_info_service.busker_info.vo.request.RequestUpdateBuskerInfoVo;
+import com.vybz.busker_info_service.kafka.event.BuskerInfoEvent;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,8 @@ public class RequestUpdateBuskerInfoDto {
     private String introduction;
 
     @Builder
-    public RequestUpdateBuskerInfoDto(String userUuid, String profileImageUrl, String nickname, String introduction) {
-        this.buskerUuid = userUuid;
+    public RequestUpdateBuskerInfoDto(String buskerUuid, String profileImageUrl, String nickname, String introduction) {
+        this.buskerUuid = buskerUuid;
         this.profileImageUrl = profileImageUrl;
         this.nickname = nickname;
         this.introduction = introduction;
@@ -35,10 +36,19 @@ public class RequestUpdateBuskerInfoDto {
 
     public static RequestUpdateBuskerInfoDto from(RequestUpdateBuskerInfoVo requestUpdateBuskerInfoVo) {
         return RequestUpdateBuskerInfoDto.builder()
-                .userUuid(requestUpdateBuskerInfoVo.getBuskerUuid())
+                .buskerUuid(requestUpdateBuskerInfoVo.getBuskerUuid())
                 .profileImageUrl(requestUpdateBuskerInfoVo.getProfileImageUrl())
                 .nickname(requestUpdateBuskerInfoVo.getNickname())
                 .introduction(requestUpdateBuskerInfoVo.getIntroduction())
+                .build();
+    }
+
+    public static BuskerInfoEvent toBuskerInfoEvent(BuskerInfo buskerInfo) {
+        return BuskerInfoEvent.builder()
+                .buskerUuid(buskerInfo.getBuskerUuid())
+                .nickname(buskerInfo.getNickname())
+                .profileImageUrl(buskerInfo.getProfileImageUrl())
+                .introduction(buskerInfo.getIntroduction())
                 .build();
     }
 

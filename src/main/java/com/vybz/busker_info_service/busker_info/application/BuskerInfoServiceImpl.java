@@ -8,6 +8,8 @@ import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoD
 import com.vybz.busker_info_service.busker_info.infrastructure.BuskerInfoRepository;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
 import com.vybz.busker_info_service.common.exception.BaseException;
+import com.vybz.busker_info_service.kafka.producer.DeleteBuskerInfoEventProducer;
+import com.vybz.busker_info_service.kafka.producer.UpdateBuskerInfoEventProducer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import java.util.List;
 public class BuskerInfoServiceImpl implements BuskerInfoService {
 
     private final BuskerInfoRepository buskerInfoRepository;
+    private final UpdateBuskerInfoEventProducer updateBuskerInfoEventProducer;
+    private final DeleteBuskerInfoEventProducer deleteBuskerInfoEventProducer;
 
     /**
      * 버스커 정보 추가
@@ -68,6 +72,8 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
         BuskerInfo buskerInfo = buskerInfoRepository.findByBuskerUuidAndDeletedFalse(requestUpdateBuskerInfoDto.getBuskerUuid())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_BUSKER));
         buskerInfoRepository.save(requestUpdateBuskerInfoDto.updateEntity(buskerInfo));
+
+        updateBuskerInfoEventProducer.sendBuskerInfoEvent(RequestUpdateBuskerInfoDto.toBuskerInfoEvent(buskerInfo));
     }
 
     /**
@@ -81,5 +87,7 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
         BuskerInfo buskerInfo = buskerInfoRepository.findByBuskerUuidAndDeletedFalse(requestDeleteBuskerInfoDto.getBuskerUuid())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_BUSKER));
         buskerInfo.softDelete();
+
+        deleteBuskerInfoEventProducer.sendBuskerInfoEvent(requestDeleteBuskerInfoDto.getBuskerUuid());
     }
 }
