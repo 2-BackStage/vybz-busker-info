@@ -11,6 +11,7 @@ import com.vybz.busker_info_service.busker_category.vo.request.RequestDeleteBusk
 import com.vybz.busker_info_service.busker_category.vo.response.ResponseBuskerCategoryVo;
 import com.vybz.busker_info_service.common.entity.BaseResponseEntity;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
+import com.vybz.busker_info_service.common.exception.BaseException;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -69,6 +70,23 @@ public class BuskerCategoryController {
     public BaseResponseEntity<Void> deleteBuskerCategoryByBuskerUuid(@RequestBody RequestDeleteBuskerCategoryListVo requestDeleteBuskerCategoryListVo) {
         buskerCategoryService.deleteBuskerCategoryByBuskerUuid(RequestDeleteBuskerCategoryListDto.from(requestDeleteBuskerCategoryListVo));
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
+    }
+
+    @Operation(
+            summary = "버스커 UUID로 대표 카테고리 1개 조회 API",
+            description = "버스커 UUID로 해당 버스커의 카테고리 중 하나를 조회합니다. 대표 카테고리 기준은 현재 첫 번째 카테고리입니다.",
+            tags = {"Busker-Category-Service"}
+    )
+    @GetMapping("/{buskerUuid}/category")
+    public BaseResponseEntity<ResponseBuskerCategoryVo> getMainCategoryByBusker(@PathVariable("buskerUuid") String buskerUuid) {
+        List<ResponseBuskerCategoryDto> categoryList = buskerCategoryService.getBuskerCategoryByBuskerUuid(buskerUuid);
+
+        if (categoryList == null || categoryList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NO_EXIST_BUSKER_OR_CATEGORY);
+        }
+
+        ResponseBuskerCategoryVo responseVo = categoryList.get(0).toVo();
+        return new BaseResponseEntity<>(responseVo);
     }
 
 }
