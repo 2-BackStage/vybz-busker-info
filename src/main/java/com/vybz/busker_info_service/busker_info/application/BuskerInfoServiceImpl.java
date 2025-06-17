@@ -5,7 +5,9 @@ import com.vybz.busker_info_service.busker_info.dto.request.RequestAddBuskerInfo
 import com.vybz.busker_info_service.busker_info.dto.request.RequestDeleteBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestUpdateBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoDto;
+import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerProfileDto;
 import com.vybz.busker_info_service.busker_info.infrastructure.BuskerInfoRepository;
+import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerProfileVo;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
 import com.vybz.busker_info_service.common.exception.BaseException;
 import com.vybz.busker_info_service.kafka.producer.DeleteBuskerInfoEventProducer;
@@ -54,7 +56,7 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
      * 모든 버스커 정보 조회
      */
     @Override
-    public List<ResponseBuskerInfoDto> getAllBuskerInfo() {
+    public List<ResponseBuskerInfoDto>  getAllBuskerInfo() {
         return buskerInfoRepository.findAllByDeletedFalse()
                 .stream()
                 .map(ResponseBuskerInfoDto::from)
@@ -89,5 +91,23 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
         buskerInfo.softDelete();
 
         deleteBuskerInfoEventProducer.sendBuskerInfoEvent(requestDeleteBuskerInfoDto.getBuskerUuid());
+    }
+
+    /**
+     * 버스커 프로필 이미지, 닉네임 조회
+     *
+     * @param buskerUuid
+     * @return
+     */
+    @Override
+    public ResponseBuskerProfileDto getBuskerProfileByUuid(String buskerUuid) {
+
+        BuskerInfo busker = buskerInfoRepository.findByBuskerUuidAndDeletedFalse(buskerUuid)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_BUSKER));
+
+        return ResponseBuskerProfileDto.builder()
+                .nickname(busker.getNickname())
+                .profileImageUrl(busker.getProfileImageUrl())
+                .build();
     }
 }
