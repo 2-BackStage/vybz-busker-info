@@ -5,15 +5,16 @@ import com.vybz.busker_info_service.busker_info.dto.request.RequestAddBuskerInfo
 import com.vybz.busker_info_service.busker_info.dto.request.RequestDeleteBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestUpdateBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoDto;
+import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerProfileDto;
 import com.vybz.busker_info_service.busker_info.vo.request.RequestAddBuskerInfoVo;
 import com.vybz.busker_info_service.busker_info.vo.request.RequestDeleteBuskerInfoVo;
 import com.vybz.busker_info_service.busker_info.vo.request.RequestUpdateBuskerInfoVo;
 import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerInfoVo;
+import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerProfileVo;
 import com.vybz.busker_info_service.common.entity.BaseResponseEntity;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,4 +83,17 @@ public class BuskerInfoController {
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 
+    @Operation(
+            summary = "버스커 UUID 통해 이미지, 닉네임 조회 API",
+            description = "버스커 UUID 통해 이미지, 닉네임 조회합니다",
+            tags = {"Busker-Service"}
+    )
+    @GetMapping("/profile/{buskerUuid}")
+    public BaseResponseEntity<ResponseBuskerProfileVo> getBuskerProfile(
+            @PathVariable("buskerUuid") String buskerUuid
+    ) {
+
+        ResponseBuskerProfileDto responseBuskerProfileDto = buskerInfoService.getBuskerProfileByUuid(buskerUuid);
+        return new BaseResponseEntity<>(responseBuskerProfileDto.toResponseBuskerProfileVo());
+    }
 }

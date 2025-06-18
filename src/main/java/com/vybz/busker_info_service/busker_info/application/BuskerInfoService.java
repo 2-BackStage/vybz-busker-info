@@ -4,6 +4,8 @@ import com.vybz.busker_info_service.busker_info.dto.request.RequestAddBuskerInfo
 import com.vybz.busker_info_service.busker_info.dto.request.RequestDeleteBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestUpdateBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoDto;
+import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerProfileDto;
+import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerProfileVo;
 
 import java.util.List;
 
@@ -37,5 +39,13 @@ public interface BuskerInfoService {
      * @param requestDeleteBuskerInfoDto
      */
     void deleteBuskerInfo(RequestDeleteBuskerInfoDto requestDeleteBuskerInfoDto);
+
+
+    /**
+     * 버스커 프로필 이미지, 닉네임 조회
+     * @param buskerUuid
+     * @return
+     */
+    ResponseBuskerProfileDto getBuskerProfileByUuid(String buskerUuid);
 
 }
