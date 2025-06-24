@@ -5,10 +5,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class RequestUpdateBuskerSnsVo {
+public class RequestUpsertBuskerSnsVo {
 
     private String buskerUuid;
     private String oldSnsUrl;
-    private String newSnsUrl;
+    private String snsUrl;
 
 }
