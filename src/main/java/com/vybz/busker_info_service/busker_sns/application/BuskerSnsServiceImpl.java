@@ -1,9 +1,8 @@
 package com.vybz.busker_info_service.busker_sns.application;
 
 import com.vybz.busker_info_service.busker_sns.domain.BuskerSns;
-import com.vybz.busker_info_service.busker_sns.dto.request.RequestAddBuskerSnsDto;
 import com.vybz.busker_info_service.busker_sns.dto.request.RequestDeleteBuskerSnsDto;
-import com.vybz.busker_info_service.busker_sns.dto.request.RequestUpdateBuskerSnsDto;
+import com.vybz.busker_info_service.busker_sns.dto.request.RequestUpsertBuskerSnsDto;
 import com.vybz.busker_info_service.busker_sns.dto.response.ResponseBuskerSnsDto;
 import com.vybz.busker_info_service.busker_sns.infrastructure.BuskerSnsRepository;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
@@ -21,16 +20,26 @@ public class BuskerSnsServiceImpl implements BuskerSnsService {
     private final BuskerSnsRepository buskerSnsRepository;
 
     /**
-     * 버스커 SNS 생성
-     * @param requestAddBuskerSnsDto
+     * 버스커 SNS 생성/ 수정
+     * @param requestUpsertBuskerSnsDto
      */
     @Transactional
     @Override
-    public void createBuskerSns(RequestAddBuskerSnsDto requestAddBuskerSnsDto) {
-        if(buskerSnsRepository.existsByBuskerUuidAndSnsUrlAndDeletedFalse(requestAddBuskerSnsDto.getBuskerUuid(), requestAddBuskerSnsDto.getSnsUrl())) {
+    public void upsertBuskerSns(RequestUpsertBuskerSnsDto requestUpsertBuskerSnsDto) {
+        String oldSnsUrl = requestUpsertBuskerSnsDto.getOldSnsUrl();
+
+        if (buskerSnsRepository.existsByBuskerUuidAndSnsUrlAndDeletedFalse(requestUpsertBuskerSnsDto.getBuskerUuid(), requestUpsertBuskerSnsDto.getSnsUrl())) {
             throw new BaseException(BaseResponseStatus.DUPLICATE_BUSKER_SNS);
         }
-        buskerSnsRepository.save(requestAddBuskerSnsDto.toEntity());
+
+        if (oldSnsUrl == null || oldSnsUrl.isBlank()) {
+            buskerSnsRepository.save(requestUpsertBuskerSnsDto.toEntity());
+            return;
+        }
+        BuskerSns existing = buskerSnsRepository.findByBuskerUuidAndSnsUrlAndDeletedFalse(requestUpsertBuskerSnsDto.getBuskerUuid(), oldSnsUrl)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_BUSKER_SNS));
+
+        existing.updateSnsUrl(requestUpsertBuskerSnsDto.getSnsUrl());
     }
 
     /**
@@ -43,21 +52,6 @@ public class BuskerSnsServiceImpl implements BuskerSnsService {
                 .stream()
                 .map(ResponseBuskerSnsDto::from)
                 .toList();
-    }
-
-    /**
-     * 버스커 sns 수정
-     * @param requestUpdateBuskerSnsDto
-     */
-    @Transactional
-    @Override
-    public void updateBuskerSns(RequestUpdateBuskerSnsDto requestUpdateBuskerSnsDto) {
-        if(buskerSnsRepository.existsByBuskerUuidAndSnsUrlAndDeletedFalse(requestUpdateBuskerSnsDto.getBuskerUuid(), requestUpdateBuskerSnsDto.getNewSnsUrl())) {
-            throw new BaseException(BaseResponseStatus.DUPLICATE_BUSKER_SNS);
-        }
-        BuskerSns buskerSns = buskerSnsRepository.findByBuskerUuidAndSnsUrlAndDeletedFalse(requestUpdateBuskerSnsDto.getBuskerUuid(), requestUpdateBuskerSnsDto.getOldSnsUrl())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NO_EXIST_BUSKER_SNS));
-        buskerSns.updateSnsUrl(requestUpdateBuskerSnsDto.getNewSnsUrl());
     }
 
     /**

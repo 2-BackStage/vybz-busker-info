@@ -1,13 +1,12 @@
 package com.vybz.busker_info_service.busker_sns.presentation;
 
 import com.vybz.busker_info_service.busker_sns.application.BuskerSnsService;
-import com.vybz.busker_info_service.busker_sns.dto.request.RequestAddBuskerSnsDto;
+import com.vybz.busker_info_service.busker_sns.dto.request.RequestUpsertBuskerSnsDto;
 import com.vybz.busker_info_service.busker_sns.dto.request.RequestDeleteBuskerSnsDto;
-import com.vybz.busker_info_service.busker_sns.dto.request.RequestUpdateBuskerSnsDto;
 import com.vybz.busker_info_service.busker_sns.dto.response.ResponseBuskerSnsDto;
 import com.vybz.busker_info_service.busker_sns.vo.request.RequestAddBuskerSnsVo;
 import com.vybz.busker_info_service.busker_sns.vo.request.RequestDeleteBuskerSnsVo;
-import com.vybz.busker_info_service.busker_sns.vo.request.RequestUpdateBuskerSnsVo;
+import com.vybz.busker_info_service.busker_sns.vo.request.RequestUpsertBuskerSnsVo;
 import com.vybz.busker_info_service.busker_sns.vo.response.ResponseBuskerSnsVo;
 import com.vybz.busker_info_service.common.entity.BaseResponseEntity;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
@@ -25,13 +24,13 @@ public class BuskerSnsController {
     private final BuskerSnsService buskerSnsService;
 
     /**
-     * 버스커 SNS 추가
-     * @param requestAddBuskerSnsVo
+     * 버스커 SNS 추가/수정
+     * @param requestUpsertBuskerSnsVo
      */
-    @Operation(summary = "버스커 SNS 추가 API", description = "버스커 SNS 추가 API 입니다.", tags = {"Busker-SNS-Service"})
+    @Operation(summary = "버스커 SNS 추가/수정 API", description = "버스커 SNS 추가/수정 API 입니다.", tags = {"Busker-SNS-Service"})
     @PostMapping
-    public BaseResponseEntity<Void> createBuskerSns(@RequestBody RequestAddBuskerSnsVo requestAddBuskerSnsVo) {
-        buskerSnsService.createBuskerSns(RequestAddBuskerSnsDto.from(requestAddBuskerSnsVo));
+    public BaseResponseEntity<Void> upsertBuskerSns(@RequestBody RequestUpsertBuskerSnsVo requestUpsertBuskerSnsVo) {
+        buskerSnsService.upsertBuskerSns(RequestUpsertBuskerSnsDto.from(requestUpsertBuskerSnsVo));
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 
@@ -43,13 +42,6 @@ public class BuskerSnsController {
                 .map(ResponseBuskerSnsDto::toVo)
                 .toList();
         return new BaseResponseEntity<>(responseBuskerSnsVo);
-    }
-
-    @Operation(summary = "버스커 sns 수정 API", description = "버스커 sns 수정 API 입니다.", tags = {"Busker-SNS-Service"})
-    @PutMapping
-    public BaseResponseEntity<Void> updateBuskerSns(@RequestBody RequestUpdateBuskerSnsVo requestUpdateBuskerSnsVo) {
-        buskerSnsService.updateBuskerSns(RequestUpdateBuskerSnsDto.from(requestUpdateBuskerSnsVo));
-        return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 
     @Operation(summary = "버스커 sns 삭제 API", description = "버스커 sns 삭제 API 입니다.", tags = {"Busker-SNS-Service"})
