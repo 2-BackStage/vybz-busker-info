@@ -10,6 +10,8 @@ import com.vybz.busker_info_service.busker_info.infrastructure.BuskerInfoReposit
 import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerProfileVo;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
 import com.vybz.busker_info_service.common.exception.BaseException;
+import com.vybz.busker_info_service.kafka.event.BuskerSearchUpdateEvent;
+import com.vybz.busker_info_service.kafka.producer.BuskerSearchUpdateEventProducer;
 import com.vybz.busker_info_service.kafka.producer.DeleteBuskerInfoEventProducer;
 import com.vybz.busker_info_service.kafka.producer.UpdateBuskerInfoEventProducer;
 import jakarta.transaction.Transactional;
@@ -25,6 +27,7 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
     private final BuskerInfoRepository buskerInfoRepository;
     private final UpdateBuskerInfoEventProducer updateBuskerInfoEventProducer;
     private final DeleteBuskerInfoEventProducer deleteBuskerInfoEventProducer;
+    private final BuskerSearchUpdateEventProducer buskerSearchUpdateEventProducer;
 
     /**
      * 버스커 정보 추가
@@ -76,6 +79,14 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
         buskerInfoRepository.save(requestUpdateBuskerInfoDto.updateEntity(buskerInfo));
 
         updateBuskerInfoEventProducer.sendBuskerInfoEvent(RequestUpdateBuskerInfoDto.toBuskerInfoEvent(buskerInfo));
+        buskerSearchUpdateEventProducer.send(
+                BuskerSearchUpdateEvent.builder()
+                        .buskerUuid(buskerInfo.getBuskerUuid())
+                        .nickname(buskerInfo.getNickname())
+                        .profileImageUrl(buskerInfo.getProfileImageUrl())
+                        .build()
+        );
+
     }
 
     /**
