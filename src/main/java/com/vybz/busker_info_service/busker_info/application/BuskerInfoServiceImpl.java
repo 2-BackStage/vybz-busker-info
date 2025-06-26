@@ -10,6 +10,7 @@ import com.vybz.busker_info_service.busker_info.infrastructure.BuskerInfoReposit
 import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerProfileVo;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
 import com.vybz.busker_info_service.common.exception.BaseException;
+import com.vybz.busker_info_service.common.util.ChosungUtils;
 import com.vybz.busker_info_service.kafka.event.BuskerSearchUpdateEvent;
 import com.vybz.busker_info_service.kafka.producer.BuskerSearchUpdateEventProducer;
 import com.vybz.busker_info_service.kafka.producer.DeleteBuskerInfoEventProducer;
@@ -83,9 +84,11 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
                 BuskerSearchUpdateEvent.builder()
                         .buskerUuid(buskerInfo.getBuskerUuid())
                         .nickname(buskerInfo.getNickname())
+                        .nicknameChosung(ChosungUtils.toChosung(buskerInfo.getNickname())) // ✅ 수정
                         .profileImageUrl(buskerInfo.getProfileImageUrl())
                         .build()
         );
+
 
     }
 
