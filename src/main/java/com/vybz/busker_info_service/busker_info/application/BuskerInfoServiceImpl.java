@@ -1,13 +1,13 @@
 package com.vybz.busker_info_service.busker_info.application;
 
 import com.vybz.busker_info_service.busker_info.domain.BuskerInfo;
+import com.vybz.busker_info_service.busker_info.dto.request.BuskerSummary;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestAddBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestDeleteBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestUpdateBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerProfileDto;
 import com.vybz.busker_info_service.busker_info.infrastructure.BuskerInfoRepository;
-import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerProfileVo;
 import com.vybz.busker_info_service.common.entity.BaseResponseStatus;
 import com.vybz.busker_info_service.common.exception.BaseException;
 import com.vybz.busker_info_service.common.util.ChosungUtils;
@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -105,6 +107,24 @@ public class BuskerInfoServiceImpl implements BuskerInfoService {
         buskerInfo.softDelete();
 
         deleteBuskerInfoEventProducer.sendBuskerInfoEvent(requestDeleteBuskerInfoDto.getBuskerUuid());
+    }
+
+    /**
+     * 버스커 UUID로 버스커 요약 정보 조회
+     * @param buskerUuid
+     */
+    @Override
+    public Map<String, BuskerSummary> getUserSummaryBulk(List<String> buskerUuid) {
+        List<BuskerInfo> buskerInfo = buskerInfoRepository.findByBuskerUuidIn(buskerUuid);
+        return buskerInfo.stream()
+                .collect(Collectors.toMap(
+                        BuskerInfo::getBuskerUuid,
+                        busker -> new BuskerSummary(
+                                busker.getBuskerUuid(),
+                                busker.getNickname(),
+                                busker.getProfileImageUrl()
+                        )
+                ));
     }
 
     /**

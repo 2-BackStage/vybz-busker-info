@@ -1,13 +1,14 @@
 package com.vybz.busker_info_service.busker_info.application;
 
+import com.vybz.busker_info_service.busker_info.dto.request.BuskerSummary;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestAddBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestDeleteBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.request.RequestUpdateBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoDto;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerProfileDto;
-import com.vybz.busker_info_service.busker_info.vo.response.ResponseBuskerProfileVo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BuskerInfoService {
 
@@ -40,6 +41,11 @@ public interface BuskerInfoService {
      */
     void deleteBuskerInfo(RequestDeleteBuskerInfoDto requestDeleteBuskerInfoDto);
 
+    /**
+     * 버스커 uuid로 버스커 요약 정보 조회
+     * @param buskerUuid
+     */
+    Map<String, BuskerSummary> getUserSummaryBulk(List<String> buskerUuid);
 
     /**
      * 버스커 프로필 이미지, 닉네임 조회

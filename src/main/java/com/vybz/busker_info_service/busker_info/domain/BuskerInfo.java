@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "busker_info")
+@Table(name = "busker_info", indexes = {
+        @Index(name = "idx_busker_info_busker_uuid", columnList = "busker_uuid", unique = true)})
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class BuskerInfo extends SoftDeletableEntity {

@@ -4,10 +4,10 @@ import com.vybz.busker_info_service.busker_info.application.BuskerInfoService;
 import com.vybz.busker_info_service.busker_info.dto.request.BuskerSummary;
 import com.vybz.busker_info_service.busker_info.dto.response.ResponseBuskerInfoDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +23,11 @@ public class InternalBuskerInfoController {
                 responseBuskerInfoDto.getBuskerUuid(),
                 responseBuskerInfoDto.getNickname(),
                 responseBuskerInfoDto.getProfileImageUrl());
+    }
+
+    @PostMapping("/summary-bulk")
+    public Map<String, BuskerSummary> getUserSummaryBulk(@RequestBody List<String> buskerUuid) {
+        return buskerInfoService.getUserSummaryBulk(buskerUuid);
     }
 
 }
