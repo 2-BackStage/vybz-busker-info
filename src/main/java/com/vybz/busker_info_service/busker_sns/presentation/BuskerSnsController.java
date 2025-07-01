@@ -34,10 +34,10 @@ public class BuskerSnsController {
         return new BaseResponseEntity<>(BaseResponseStatus.SUCCESS);
     }
 
-    @Operation(summary = "유저 uuid로 버스커 SNS 리스트 조회 API", description = "유저 uuid로 버스커 SNS 리스트 조회 API 입니다.", tags = {"Busker-SNS-Service"})
-    @GetMapping("/list/{userUuid}")
-    public BaseResponseEntity<List<ResponseBuskerSnsVo>> getBuskerSnsList(@PathVariable("userUuid") String userUuid) {
-        List<ResponseBuskerSnsVo> responseBuskerSnsVo = buskerSnsService.findBuskerSnsByBuskerUuid(userUuid)
+    @Operation(summary = "버스커 uuid로 버스커 SNS 리스트 조회 API", description = "버스커 uuid로 버스커 SNS 리스트 조회 API 입니다.", tags = {"Busker-SNS-Service"})
+    @GetMapping("/list/{buskerUuid}")
+    public BaseResponseEntity<List<ResponseBuskerSnsVo>> getBuskerSnsList(@PathVariable("buskerUuid") String buskerUuid) {
+        List<ResponseBuskerSnsVo> responseBuskerSnsVo = buskerSnsService.findBuskerSnsByBuskerUuid(buskerUuid)
                 .stream()
                 .map(ResponseBuskerSnsDto::toVo)
                 .toList();
